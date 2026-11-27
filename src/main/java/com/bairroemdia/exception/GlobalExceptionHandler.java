@@ -47,6 +47,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> tratarErroInterno(
             Exception ex) {
 
+        ex.printStackTrace();
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
                         "status", 500,

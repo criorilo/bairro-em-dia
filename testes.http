@@ -1,0 +1,12 @@
+
+### Cadastrar morador
+POST http://localhost:8080/moradores
+Content-Type: application/json
+
+{
+  "nome": "João da Silva",
+  "email": "joao.silva@email.com",
+  "telefone": "11987654321"
+}
+
+###

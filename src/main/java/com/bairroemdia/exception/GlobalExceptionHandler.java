@@ -47,17 +47,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> tratarErroInterno(
             Exception ex) {
 
+        System.err.println("===== ERRO INTERNO =====");
         ex.printStackTrace();
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                        "status", 500,
-                        "erro", "Erro interno do servidor",
-                        "mensagem", "Ocorreu um erro inesperado.",
-                        "timestamp", Instant.now().toString()
-                ));
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("status", 500);
+        resposta.put("erro", "Erro interno do servidor");
+        resposta.put("mensagem", ex.getMessage() != null
+                ? ex.getMessage()
+                : "Ocorreu um erro inesperado.");
+        resposta.put("timestamp", Instant.now().toString());
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(resposta);
     }
 
+    // Tratar erros de validação
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> tratarErrosValidacao(
             MethodArgumentNotValidException ex) {
@@ -68,6 +74,8 @@ public class GlobalExceptionHandler {
                 erros.put(erro.getField(), erro.getDefaultMessage())
         );
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(erros);
     }
 }

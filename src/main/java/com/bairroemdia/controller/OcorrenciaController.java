@@ -6,6 +6,8 @@ import com.bairroemdia.dto.OcorrenciaDTO;
 import com.bairroemdia.model.Ocorrencia;
 import com.bairroemdia.model.StatusOcorrencia;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,6 @@ public class OcorrenciaController {
         this.ocorrenciaBO = ocorrenciaBO;
     }
 
-    // Converter entidade em DTO
     private OcorrenciaDTO converterParaDTO(Ocorrencia o) {
         return new OcorrenciaDTO(
                 o.getId(),
@@ -38,24 +39,22 @@ public class OcorrenciaController {
         );
     }
 
-    // Cadastrar ocorrência
     @PostMapping
     public ResponseEntity<OcorrenciaDTO> cadastrar(
-            @RequestParam String titulo,
-            @RequestParam String descricao,
-            @RequestParam String endereco,
-            @RequestParam Long moradorId,
-            @RequestParam Long categoriaId) {
+            @Valid @RequestBody OcorrenciaDTO dto) {
 
         Ocorrencia o = ocorrenciaBO.cadastrar(
-                titulo, descricao, endereco, moradorId, categoriaId
+                dto.getTitulo(),
+                dto.getDescricao(),
+                dto.getEndereco(),
+                dto.getMoradorId(),
+                dto.getCategoriaId()
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(converterParaDTO(o));
     }
 
-    // Listar todas as ocorrências
     @GetMapping
     public ResponseEntity<List<OcorrenciaDTO>> listarTodas() {
 
@@ -67,7 +66,6 @@ public class OcorrenciaController {
         return ResponseEntity.ok(ocorrencias);
     }
 
-    // Buscar ocorrência por ID
     @GetMapping("/{id}")
     public ResponseEntity<OcorrenciaDTO> buscarPorId(
             @PathVariable Long id) {
@@ -77,22 +75,21 @@ public class OcorrenciaController {
         );
     }
 
-    // Atualizar ocorrência
     @PutMapping("/{id}")
     public ResponseEntity<OcorrenciaDTO> atualizar(
             @PathVariable Long id,
-            @RequestParam String titulo,
-            @RequestParam String descricao,
-            @RequestParam String endereco) {
+            @Valid @RequestBody OcorrenciaDTO dto) {
 
         Ocorrencia o = ocorrenciaBO.atualizar(
-                id, titulo, descricao, endereco
+                id,
+                dto.getTitulo(),
+                dto.getDescricao(),
+                dto.getEndereco()
         );
 
         return ResponseEntity.ok(converterParaDTO(o));
     }
 
-    // Atualizar status
     @PatchMapping("/{id}/status")
     public ResponseEntity<OcorrenciaDTO> atualizarStatus(
             @PathVariable Long id,
@@ -103,7 +100,6 @@ public class OcorrenciaController {
         return ResponseEntity.ok(converterParaDTO(o));
     }
 
-    // Excluir ocorrência
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         ocorrenciaBO.excluir(id);

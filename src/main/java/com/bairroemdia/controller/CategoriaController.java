@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaController {
@@ -24,7 +26,7 @@ public class CategoriaController {
     // Cadastrar categoria
     @PostMapping
     public ResponseEntity<CategoriaDTO> cadastrar(
-            @RequestBody CategoriaDTO dto) {
+            @Valid @RequestBody CategoriaDTO dto) {
 
         Categoria categoria = categoriaBO.cadastrar(
                 dto.getNome(),

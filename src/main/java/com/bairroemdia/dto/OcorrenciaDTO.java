@@ -2,36 +2,45 @@
 package com.bairroemdia.dto;
 
 import com.bairroemdia.model.StatusOcorrencia;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 public class OcorrenciaDTO {
 
     private Long id;
+
+    @NotBlank(message = "O título é obrigatório")
     private String titulo;
+
+    @NotBlank(message = "A descrição é obrigatória")
     private String descricao;
+
+    @NotBlank(message = "O endereço é obrigatório")
     private String endereco;
+
     private StatusOcorrencia status;
     private LocalDateTime dataRegistro;
+
+    @NotNull(message = "O ID do morador é obrigatório")
     private Long moradorId;
+
     private String nomeMorador;
+
+    @NotNull(message = "O ID da categoria é obrigatório")
     private Long categoriaId;
+
     private String nomeCategoria;
 
     public OcorrenciaDTO() {
     }
 
-    public OcorrenciaDTO(
-            Long id,
-            String titulo,
-            String descricao,
-            String endereco,
-            StatusOcorrencia status,
-            LocalDateTime dataRegistro,
-            Long moradorId,
-            String nomeMorador,
-            Long categoriaId,
-            String nomeCategoria) {
-
+    public OcorrenciaDTO(Long id, String titulo, String descricao,
+                         String endereco, StatusOcorrencia status,
+                         LocalDateTime dataRegistro, Long moradorId,
+                         String nomeMorador, Long categoriaId,
+                         String nomeCategoria) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;

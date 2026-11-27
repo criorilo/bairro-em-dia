@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/moradores")
 public class MoradorController {
@@ -24,7 +26,7 @@ public class MoradorController {
     // Cadastrar morador
     @PostMapping
     public ResponseEntity<MoradorDTO> cadastrar(
-            @RequestBody MoradorDTO dto) {
+            @Valid @RequestBody MoradorDTO dto) {
 
         Morador morador = moradorBO.cadastrar(
                 dto.getNome(),
@@ -81,7 +83,7 @@ public class MoradorController {
     @PutMapping("/{id}")
     public ResponseEntity<MoradorDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody MoradorDTO dto) {
+            @Valid @RequestBody MoradorDTO dto) {
 
         Morador m = moradorBO.atualizar(
                 id,

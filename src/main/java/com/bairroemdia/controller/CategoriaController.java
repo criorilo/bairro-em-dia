@@ -2,6 +2,7 @@
 package com.bairroemdia.controller;
 
 import com.bairroemdia.bo.CategoriaBO;
+import com.bairroemdia.dto.CategoriaDTO;
 import com.bairroemdia.model.Categoria;
 
 import org.springframework.http.HttpStatus;
@@ -22,45 +23,75 @@ public class CategoriaController {
 
     // Cadastrar categoria
     @PostMapping
-    public ResponseEntity<Categoria> cadastrar(
-            @RequestBody Categoria categoria) {
+    public ResponseEntity<CategoriaDTO> cadastrar(
+            @RequestBody CategoriaDTO dto) {
 
-        Categoria novaCategoria = categoriaBO.cadastrar(
+        Categoria categoria = categoriaBO.cadastrar(
+                dto.getNome(),
+                dto.getDescricao()
+        );
+
+        CategoriaDTO resposta = new CategoriaDTO(
+                categoria.getId(),
                 categoria.getNome(),
                 categoria.getDescricao()
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(novaCategoria);
+                .body(resposta);
     }
 
     // Listar todas as categorias
     @GetMapping
-    public ResponseEntity<List<Categoria>> listarTodas() {
-        return ResponseEntity.ok(categoriaBO.listarTodas());
+    public ResponseEntity<List<CategoriaDTO>> listarTodas() {
+
+        List<CategoriaDTO> categorias = categoriaBO.listarTodas()
+                .stream()
+                .map(c -> new CategoriaDTO(
+                        c.getId(),
+                        c.getNome(),
+                        c.getDescricao()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(categorias);
     }
 
     // Buscar categoria por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> buscarPorId(
+    public ResponseEntity<CategoriaDTO> buscarPorId(
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(categoriaBO.buscarPorId(id));
+        Categoria c = categoriaBO.buscarPorId(id);
+
+        CategoriaDTO dto = new CategoriaDTO(
+                c.getId(),
+                c.getNome(),
+                c.getDescricao()
+        );
+
+        return ResponseEntity.ok(dto);
     }
 
     // Atualizar categoria
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> atualizar(
+    public ResponseEntity<CategoriaDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody Categoria categoria) {
+            @RequestBody CategoriaDTO dto) {
 
-        Categoria atualizada = categoriaBO.atualizar(
+        Categoria c = categoriaBO.atualizar(
                 id,
-                categoria.getNome(),
-                categoria.getDescricao()
+                dto.getNome(),
+                dto.getDescricao()
         );
 
-        return ResponseEntity.ok(atualizada);
+        CategoriaDTO resposta = new CategoriaDTO(
+                c.getId(),
+                c.getNome(),
+                c.getDescricao()
+        );
+
+        return ResponseEntity.ok(resposta);
     }
 
     // Excluir categoria

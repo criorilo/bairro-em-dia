@@ -2,6 +2,7 @@
 package com.bairroemdia.controller;
 
 import com.bairroemdia.bo.MoradorBO;
+import com.bairroemdia.dto.MoradorDTO;
 import com.bairroemdia.model.Morador;
 
 import org.springframework.http.HttpStatus;
@@ -22,47 +23,81 @@ public class MoradorController {
 
     // Cadastrar morador
     @PostMapping
-    public ResponseEntity<Morador> cadastrar(
-            @RequestBody Morador morador) {
+    public ResponseEntity<MoradorDTO> cadastrar(
+            @RequestBody MoradorDTO dto) {
 
-        Morador novoMorador = moradorBO.cadastrar(
+        Morador morador = moradorBO.cadastrar(
+                dto.getNome(),
+                dto.getEmail(),
+                dto.getTelefone()
+        );
+
+        MoradorDTO resposta = new MoradorDTO(
+                morador.getId(),
                 morador.getNome(),
                 morador.getEmail(),
                 morador.getTelefone()
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(novoMorador);
+                .body(resposta);
     }
 
     // Listar todos os moradores
     @GetMapping
-    public ResponseEntity<List<Morador>> listarTodos() {
-        return ResponseEntity.ok(moradorBO.listarTodos());
+    public ResponseEntity<List<MoradorDTO>> listarTodos() {
+
+        List<MoradorDTO> moradores = moradorBO.listarTodos()
+                .stream()
+                .map(m -> new MoradorDTO(
+                        m.getId(),
+                        m.getNome(),
+                        m.getEmail(),
+                        m.getTelefone()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(moradores);
     }
 
     // Buscar morador por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Morador> buscarPorId(
+    public ResponseEntity<MoradorDTO> buscarPorId(
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(moradorBO.buscarPorId(id));
+        Morador m = moradorBO.buscarPorId(id);
+
+        MoradorDTO dto = new MoradorDTO(
+                m.getId(),
+                m.getNome(),
+                m.getEmail(),
+                m.getTelefone()
+        );
+
+        return ResponseEntity.ok(dto);
     }
 
     // Atualizar morador
     @PutMapping("/{id}")
-    public ResponseEntity<Morador> atualizar(
+    public ResponseEntity<MoradorDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody Morador morador) {
+            @RequestBody MoradorDTO dto) {
 
-        Morador atualizado = moradorBO.atualizar(
+        Morador m = moradorBO.atualizar(
                 id,
-                morador.getNome(),
-                morador.getEmail(),
-                morador.getTelefone()
+                dto.getNome(),
+                dto.getEmail(),
+                dto.getTelefone()
         );
 
-        return ResponseEntity.ok(atualizado);
+        MoradorDTO resposta = new MoradorDTO(
+                m.getId(),
+                m.getNome(),
+                m.getEmail(),
+                m.getTelefone()
+        );
+
+        return ResponseEntity.ok(resposta);
     }
 
     // Excluir morador

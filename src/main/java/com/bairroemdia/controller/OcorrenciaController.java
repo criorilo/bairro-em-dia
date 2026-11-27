@@ -2,6 +2,7 @@
 package com.bairroemdia.controller;
 
 import com.bairroemdia.bo.OcorrenciaBO;
+import com.bairroemdia.dto.OcorrenciaDTO;
 import com.bairroemdia.model.Ocorrencia;
 import com.bairroemdia.model.StatusOcorrencia;
 
@@ -21,59 +22,85 @@ public class OcorrenciaController {
         this.ocorrenciaBO = ocorrenciaBO;
     }
 
+    // Converter entidade em DTO
+    private OcorrenciaDTO converterParaDTO(Ocorrencia o) {
+        return new OcorrenciaDTO(
+                o.getId(),
+                o.getTitulo(),
+                o.getDescricao(),
+                o.getEndereco(),
+                o.getStatus(),
+                o.getDataRegistro(),
+                o.getMorador().getId(),
+                o.getMorador().getNome(),
+                o.getCategoria().getId(),
+                o.getCategoria().getNome()
+        );
+    }
+
     // Cadastrar ocorrência
     @PostMapping
-    public ResponseEntity<Ocorrencia> cadastrar(
+    public ResponseEntity<OcorrenciaDTO> cadastrar(
             @RequestParam String titulo,
             @RequestParam String descricao,
             @RequestParam String endereco,
             @RequestParam Long moradorId,
             @RequestParam Long categoriaId) {
 
-        Ocorrencia nova = ocorrenciaBO.cadastrar(
+        Ocorrencia o = ocorrenciaBO.cadastrar(
                 titulo, descricao, endereco, moradorId, categoriaId
         );
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(nova);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(converterParaDTO(o));
     }
 
     // Listar todas as ocorrências
     @GetMapping
-    public ResponseEntity<List<Ocorrencia>> listarTodas() {
-        return ResponseEntity.ok(ocorrenciaBO.listarTodas());
+    public ResponseEntity<List<OcorrenciaDTO>> listarTodas() {
+
+        List<OcorrenciaDTO> ocorrencias = ocorrenciaBO.listarTodas()
+                .stream()
+                .map(this::converterParaDTO)
+                .toList();
+
+        return ResponseEntity.ok(ocorrencias);
     }
 
     // Buscar ocorrência por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Ocorrencia> buscarPorId(
+    public ResponseEntity<OcorrenciaDTO> buscarPorId(
             @PathVariable Long id) {
-        return ResponseEntity.ok(ocorrenciaBO.buscarPorId(id));
+
+        return ResponseEntity.ok(
+                converterParaDTO(ocorrenciaBO.buscarPorId(id))
+        );
     }
 
     // Atualizar ocorrência
     @PutMapping("/{id}")
-    public ResponseEntity<Ocorrencia> atualizar(
+    public ResponseEntity<OcorrenciaDTO> atualizar(
             @PathVariable Long id,
             @RequestParam String titulo,
             @RequestParam String descricao,
             @RequestParam String endereco) {
 
-        Ocorrencia atualizada = ocorrenciaBO.atualizar(
+        Ocorrencia o = ocorrenciaBO.atualizar(
                 id, titulo, descricao, endereco
         );
 
-        return ResponseEntity.ok(atualizada);
+        return ResponseEntity.ok(converterParaDTO(o));
     }
 
     // Atualizar status
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Ocorrencia> atualizarStatus(
+    public ResponseEntity<OcorrenciaDTO> atualizarStatus(
             @PathVariable Long id,
             @RequestParam StatusOcorrencia status) {
 
-        return ResponseEntity.ok(
-                ocorrenciaBO.atualizarStatus(id, status)
-        );
+        Ocorrencia o = ocorrenciaBO.atualizarStatus(id, status);
+
+        return ResponseEntity.ok(converterParaDTO(o));
     }
 
     // Excluir ocorrência

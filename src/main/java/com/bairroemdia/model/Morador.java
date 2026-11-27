@@ -44,4 +44,10 @@ public class Morador {
     public String getTelefone() {
         return telefone;
     }
+
+    public void atualizar(String nome, String email, String telefone) {
+        this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
+    }
 }

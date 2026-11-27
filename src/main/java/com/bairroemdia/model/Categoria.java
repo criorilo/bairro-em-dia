@@ -36,4 +36,9 @@ public class Categoria {
     public String getDescricao() {
         return descricao;
     }
+
+    public void atualizar(String nome, String descricao) {
+        this.nome = nome;
+        this.descricao = descricao;
+    }
 }
